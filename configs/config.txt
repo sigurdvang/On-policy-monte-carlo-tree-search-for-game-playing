@@ -1,0 +1,18 @@
+[SYSTEM]
+game_to_play = hex
+g = 50
+m = 500
+verbose = True
+start_player = 1
+
+[HEX]
+k = 4
+
+[ANET]
+learning_rate = 0.01
+hidden_layers = 50,50,50
+hidden_activations = relu,relu,relu
+optimizer = adam
+m = 5
+g = 5
+
