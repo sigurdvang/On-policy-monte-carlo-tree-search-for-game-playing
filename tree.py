@@ -10,6 +10,7 @@ class Node:
 
     def __init__(self, state, possible_actions):
         self.state = state
+        self.network_input = np.array([state])
         self.possible_actions = possible_actions
         self.children = self.build_edges_from_actions(possible_actions)
         self.visits = 0
@@ -41,8 +42,9 @@ class Node:
 
         return self.possible_actions[action_index]
 
-    def get_rollout_action(self, actor, player):
-        return actor.default_policy(player, self.state)
+    def get_rollout_action(self, actor):
+        return actor.default_policy(self.network_input)
+        #return self.possible_actions[np.random.randint(0, len(self.possible_actions))]
 
 
     def u(self, action_index):
@@ -69,3 +71,11 @@ class Node:
         action_index = self.possible_actions.index(action)
         self.increment_edge_visit(action_index)
         self.update_q(action_index, reward)
+
+    def get_distribution(self):
+        distribution_values = self.edge_visits / self.edge_visits.sum()
+        distribution = {}
+        for action in self.children:
+            action_index = self.possible_actions.index(action)
+            distribution[action] = distribution_values[action_index]
+        return distribution

@@ -114,17 +114,17 @@ class Board:
         """
         gets string representation of board
         """
-        state = ""
+        state = []
         for row in self.board:
             for cell in row:
-                state += str(cell.has_peg)
+                state.append(cell.has_peg)
         return state
 
     def set_state(self, state):
         i = 0
         for row in self.board:
             for cell in row:
-                cell.has_peg = int(state[i])
+                cell.has_peg = state[i]
                 i += 1
         self.set_free_cells()
 

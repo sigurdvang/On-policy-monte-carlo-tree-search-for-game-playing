@@ -2,6 +2,9 @@ import configparser
 import random
 from state_manager import *
 from actor import *
+from tree import *
+import numpy as np
+
 
 class Config:
     """
@@ -36,6 +39,28 @@ class Config:
         self.anet_g = config["ANET"]["g"]
         
 
+class ReplayBuffer:
+
+    def __init__(self, tree_distribution_converter, max_length=2000):
+        self.buffer = []
+        self.labels = []
+        self.max_length = max_length
+        self.tree_distribution_converter = tree_distribution_converter
+
+    def add_case(self, state, distribution):
+        label = self.tree_distribution_converter(distribution)
+        self.buffer.append(np.array(state))
+        self.labels.append(label)
+        
+        if len(self.buffer) > self.max_length:
+            self.buffer.pop(0)
+            self.labels.pop(0)
+
+    def generate_minibatch(self, size):
+        if size >= len(self.buffer):
+            return np.array(self.buffer), np.array(self.labels)
+        
+            
 
 def choose_start_player(player_option):
     if player_option in [1,2]:

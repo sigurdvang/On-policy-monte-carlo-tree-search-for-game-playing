@@ -15,12 +15,6 @@ class Game:
     def has_won(self, player):
         return self.winning_player == player
 
-    def anet_index_to_action_map(self):
-        raise NotImplementedError("Subclass with game specific method")
-
-    def get_illegal_action_pruner(self):
-        raise NotImplementedError("Subclass with game specific method")
-
 class Hex(Game):
 
     def __init__(self, verbose, k):
@@ -100,30 +94,6 @@ class Hex(Game):
         if verbose:
             self.board.display_board()
 
-    def anet_index_to_action_map(self, anet_index):
-        """
-        maps index in anet output to correct index 
-        on board
-        """
-        i = 0
-        j = 0
-        while anet_index - self.board.size >= 0:
-            anet_index -= self.board.size
-            i += 1
-        while anet_index - 1 >= 0:
-            anet_index -= 1
-            j += 1
-        return (i, j)
-
-    def get_illegal_action_pruner(self, network_output):
-        """
-        removes states from output that allready exists
-        """
-        state = self.get_state()
-        for i in range(network_output.shape[1]):
-            if state[i] != "0":
-                network_output[0, i] = 0.0
-        return network_output
 
 if __name__ == "__main__":
     h = Hex(True, 7)

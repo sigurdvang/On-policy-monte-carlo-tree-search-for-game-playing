@@ -29,17 +29,17 @@ class Actor:
         #add output layer
         self.model.add(keras.layers.Dense(self.nr_output_nodes, activation="softmax"))
 
-        self.model.compile(loss="sparse_categorical_crossentropy", 
+        self.model.compile(loss="categorical_crossentropy", 
                            optimizer=optimizer,
                            metrics = ["accuracy"]
                            )
 
-    def default_policy(self, player, state):
-        full_state = str(player) + str(state)
-        network_input = np.array([int(x) for x in full_state]).reshape(1, self.nr_input_nodes)
-        network_output = self.model.predict(network_input)
-        network_output = self.illegal_action_pruner(network_output)
-        return self.vec_to_action_map(network_output.argmax())
+        self.model.summary()
 
-    def train_on_cases(x, y):
-        self.model.train(x,y)
+    def default_policy(self, network_input):
+        network_output = self.model.predict(network_input)
+        action = self.illegal_action_pruner(network_output, self.vec_to_action_map)
+        return action
+
+    def train(self, x, y):
+        self.model.fit(x=x,y=y,epochs=1)
